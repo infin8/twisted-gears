@@ -3,7 +3,7 @@ from twisted.internet import reactor, protocol, task
 
 import client, cjson, traceback
 
-class GearmanClientFactory(protocol.ClientFactory):
+class GearmanWorkerFactory(protocol.ClientFactory):
     protocol = client.GearmanProtocol
 
     def __init__(self, concurrency=5, id=None):

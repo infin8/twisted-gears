@@ -1,7 +1,7 @@
 from twisted.application import internet, service
 from twisted.internet import reactor, protocol, task
 
-import client, cjson, traceback
+import client, json
 
 class GearmanWorkerFactory(protocol.ClientFactory):
     protocol = client.GearmanProtocol
@@ -53,13 +53,13 @@ class GearmanWorkerService(service.Service):
 
 def expose(f):
     def wrapped(job):
-        args = cjson.decode(job)
+        args = json.loads(job.data)
         
         try:
             d = f(*args)
-            d.addCallback(cjson.encode)
+            d.addCallback(json.dumps)
             return d
         except Exception, e:
-            return cjson.encode({'error': traceback.print_tb(e) + str(e)})
+            return json.dumps({'error': str(e)})
     
     return wrapped
